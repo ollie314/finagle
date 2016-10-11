@@ -7,13 +7,8 @@ Note that ``RB_ID=#`` correspond to associated messages in commits.
 6.x
 -----
 
-Deprecations
-~~~~~~~~~~~~
-
-* finagle-kestrel: Deprecate `c.t.f.kestrel.protocol.Kestrel()`,
-  `c.t.f.kestrel.protocol.Kestrel(failFast)`, and `c.t.f.kestrel.protocol.Kestrel.get()`.
-  To create a Kestrel client using ClientBuilder, use `.stack(c.t.f.Kestrel.client)`.
-  ``RB_ID=870686``
+6.39.0
+------
 
 New Features
 ~~~~~~~~~~~~
@@ -25,7 +20,31 @@ New Features
     enables/disables pooling of receive buffers (disabled by default). When enabled, lowers
     the CPU usage and allocation rate (GC pressure) with the cost of increased memory
     footprint at the startup. ``RB_ID=872940``
->>>>>>> master
+
+  * finagle-netty4: Add new histogram `receive_buffer_bytes` (only enabled with pooling)
+    to keep track of the receive buffer sizes (useful for tuning pooling). ``RB_ID=877080``
+
+  * finagle: Most libraries (excluding finagle-thrift{,mux}) no longer need to
+    add an additional resolver that points to maven.twttr.com. ``RB_ID=878967``
+
+Deprecations
+~~~~~~~~~~~~
+
+* finagle-core: `c.t.f.builder.ClientBuilder` deprecate some seldom used methods.
+  The same functionality is available through the Stack-based APIs or
+  `ClientBuilder.configured`. ``RB_ID=878009``
+
+  - `readerIdleTimeout`
+  - `writerIdleTimeout`
+  - `recvBufferSize`
+  - `sendBufferSize`
+  - `channelFactory`
+  - `expHostConnectionBufferSize`
+
+* finagle-kestrel: Deprecate `c.t.f.kestrel.protocol.Kestrel()`,
+  `c.t.f.kestrel.protocol.Kestrel(failFast)`, and `c.t.f.kestrel.protocol.Kestrel.get()`.
+  To create a Kestrel client using ClientBuilder, use `.stack(c.t.f.Kestrel.client)`.
+  ``RB_ID=870686``
 
 Breaking API Changes
 ~~~~~~~~~~~~~~~~~~~~
@@ -53,6 +72,10 @@ Runtime Behavior Changes
     be disabled by setting the toggle "com.twitter.finagle.http.serverErrorsAsFailures"
     to `0.0` or explicitly setting it using `withResponseClassifier`.
     ``RB_ID=869303``, ``RB_ID=875367``
+
+  * finagle-thrift: Also track response failures in the
+    `c.t.finagle.thrift.ThriftServiceIface#statsFilter` in addition to successful
+    responses that encode an Error or Exception. ``RB_ID=879075``
 
 Bug Fixes
 ~~~~~~~~~
