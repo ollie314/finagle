@@ -276,7 +276,7 @@ object Finagle extends Build {
       util("stats"),
       netty4Http
     ) ++ netty4Libs
-  ).dependsOn(finagleCore)
+  ).dependsOn(finagleCore, finagleToggle)
 
   lazy val finagleOstrich4 = Project(
     id = "finagle-ostrich4",
@@ -394,11 +394,10 @@ object Finagle extends Build {
         ExclusionRule("org.apache.zookeeper", "zookeeper-client"),
         ExclusionRule("org.scala-lang.modules", "scala-parser-combinators_2.11")
       ),
-      "com.twitter.common" % "service-thrift" % "1.0.54",
+      "com.twitter.common" % "service-thrift" % "1.0.55",
       guavaLib
     ),
     libraryDependencies ++= jacksonLibs,
-    resolvers += "twitter-repo" at "https://maven.twttr.com",
     excludeFilter in unmanagedSources := "ZkTest.scala"
   ).dependsOn(finagleCore)
 
@@ -491,7 +490,7 @@ object Finagle extends Build {
         "silly" % "silly-thrift" % "0.5.0" % "test",
         "commons-lang" % "commons-lang" % "2.6" % "test") ++ scroogeLibs,
     resolvers += "twitter-repo" at "https://maven.twttr.com"
-  ).dependsOn(finagleCore, finagleNetty4)
+  ).dependsOn(finagleCore, finagleNetty4, finagleToggle)
 
   lazy val finagleMemcached = Project(
     id = "finagle-memcached",
@@ -507,12 +506,14 @@ object Finagle extends Build {
       "com.twitter" %% "bijection-core" % "0.9.2",
       "com.twitter.common" % "io-json" % "0.0.54",
       "com.twitter.common" % "zookeeper-testing" % "0.0.56" % "test" excludeAll(
+        ExclusionRule("com.google.testing", "test-libraries-for-java"),
         ExclusionRule("com.twitter", "finagle-core-java"),
         ExclusionRule("com.twitter", "finagle-core_2.11"),
         ExclusionRule("com.twitter", "finagle-http-java"),
         ExclusionRule("com.twitter", "util-core-java"),
         ExclusionRule("com.twitter", "util-core_2.11"),
         ExclusionRule("com.twitter", "twitter-server_2.11"),
+        ExclusionRule("com.twitter.common", "metrics"),
         ExclusionRule("com.twitter.common", "service-thrift"),
         ExclusionRule("org.apache.thrift", "libthrift"),
         ExclusionRule("org.apache.zookeeper", "zookeeper"),
@@ -521,8 +522,7 @@ object Finagle extends Build {
         ExclusionRule("org.scala-lang.modules", "scala-parser-combinators_2.11")
       )
     ),
-    libraryDependencies ++= jacksonLibs,
-    resolvers += "twitter-repo" at "https://maven.twttr.com"
+    libraryDependencies ++= jacksonLibs
   ).dependsOn(finagleCore, finagleNetty4, finagleServersets, finagleToggle)
 
   lazy val finagleKestrel = Project(
@@ -659,7 +659,7 @@ object Finagle extends Build {
     name := "finagle-benchmark",
     libraryDependencies ++= Seq(
       util("codec"),
-      "com.twitter.common" % "metrics-data-sample" % "0.0.2",
+      "com.twitter.common" % "metrics-data-sample" % "0.0.1",
       "org.apache.curator" % "curator-test" % "2.8.0",
       "org.apache.curator" % "curator-framework" % "2.8.0"
     ),
